@@ -5,14 +5,7 @@ import classes from './filter-modal.component.module.css';
 import {Order_By, usePokemonsQuery} from "@/graphql/generated";
 
 function FilterModalComponent() {
-    const { data, isLoading, error } = usePokemonsQuery({
-        endpoint: "https://beta.pokeapi.co/graphql/v1beta",
-        fetchParams:{
-            headers:{
-                "Content-Type": "application/json",
-            }
-        }
-        },
+    const { data, isLoading, error } = usePokemonsQuery(
     {
         "where": {
         "pokemon_v2_generation": { "name": { "_eq": "generation-iii" } },

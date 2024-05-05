@@ -13,5 +13,9 @@ generates:
       - typescript
       - typescript-operations
       - typescript-react-query
-
+    config:
+      fetcher:
+        # What function to run?
+        func: "./custom-fetcher#fetcher"
+        isReactHook: false
 
