@@ -16,6 +16,7 @@ function FilterModalComponent() {
     const [valueItemList, setValueItemList] =
         React.useState<FilterModel[]>([]);
     const[, updateState] = React.useState<string>();
+    const[isShowBtnDisabled, setIsShowBtnDisabled] = React.useState<boolean>(true);
 
     const selectedFiltersAndValues =
         React.useRef<SelectedFilterModel>({
@@ -31,13 +32,17 @@ function FilterModalComponent() {
         const selectedItemValueList = filterConfig.filter((obj) => obj.value === item.value)[0].options as FilterModel[];
         setSecondaryItemList(selectedItemValueList);
 
-        /** Reset **/
+        reset(item);
+    }
+
+    function reset(item: FilterModel){
         selectedFiltersAndValues.current = {
             primary: item.value,
             secondary: []
         };
         setValueItemList([]);
-        setSelectedSecondaryItem(null)
+        setSelectedSecondaryItem(null);
+        setIsShowBtnDisabled(true);
     }
 
     function secondaryItemSelectionHandler(item: FilterModel) {
@@ -63,6 +68,7 @@ function FilterModalComponent() {
         updateState(new Date().toString());
         selectedFiltersAndValues.current = updateObject(selectedFiltersAndValues.current, secondaryValue, inputType, value);
         console.log("secondaryValue: ", secondaryValue, "inputType: ", inputType, "value: ", value);
+        setIsShowBtnDisabled(false);
     }
 
     function updateObject(currentSelectedFiltersAndValues: SelectedFilterModel, secondaryValue: string, inputType: string, value: string) {
@@ -181,8 +187,12 @@ function FilterModalComponent() {
                 </ul>
             </main>
             <footer className={classes["modal__footer"]}>
-                <button className={classes["modal__footer__btn-reset"]}>Reset all filters</button>
-                <button className={classes["modal__footer__btn-show"]}>Show pokemons</button>
+                <button
+                    onClick={() => primaryItemSelectionHandler(filterConfig[0])}
+                    className={classes["modal__footer__btn-reset"]}>Reset all filters</button>
+                <button
+                    disabled={isShowBtnDisabled}
+                    className={classes["modal__footer__btn-show"]}>Show pokemons &gt;</button>
             </footer>
         </dialog>
     );
