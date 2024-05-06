@@ -1,80 +1,188 @@
 "use client";
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import classes from './filter-modal.component.module.css';
-import {Order_By, usePokemonsQuery} from "@/graphql/generated";
+import {FilterModel} from "@/models/filter.model";
+import filterConfig from "@/config/filter.config";
+import {SelectedFilterModel} from "@/models/selected-filter.model";
 
 function FilterModalComponent() {
-    const { data, isLoading, error } = usePokemonsQuery(
-    {
-        "where": {
-        "pokemon_v2_generation": { "name": { "_eq": "generation-iii" } },
-        "pokemon_v2_pokemoncolor": { "name": { "_eq": "green" } },
-        "pokemon_v2_pokemonhabitat": {
-            "pokemon_v2_pokemonhabitatnames": { "name": { "_in": ["grassland", "mountain", "water's edge"] } }
-        }
-    },
-        "order_by": {
-        "id": Order_By.Asc
-    }
-    }
-)
+    const [selectedPrimaryItem, setSelectedPrimaryItem] =
+        React.useState<string>(filterConfig[0].value);
+    const [selectedSecondaryItem, setSelectedSecondaryItem] =
+        React.useState<FilterModel | null>();
+    const [secondaryItemList, setSecondaryItemList] =
+        React.useState<FilterModel[]>([]);
+    const [valueItemList, setValueItemList] =
+        React.useState<FilterModel[]>([]);
+    const[, updateState] = React.useState<string>();
 
-    console.log("isLoading : ", isLoading);
-    console.log("data : ", data);
-    console.log("error : ", error);
+    const selectedFiltersAndValues =
+        React.useRef<SelectedFilterModel>({
+            primary: filterConfig[0].value,
+            secondary: []
+        });
+
+
+
+    function primaryItemSelectionHandler(item: FilterModel) {
+        setSelectedPrimaryItem(item.value);
+
+        const selectedItemValueList = filterConfig.filter((obj) => obj.value === item.value)[0].options as FilterModel[];
+        setSecondaryItemList(selectedItemValueList);
+
+        /** Reset **/
+        selectedFiltersAndValues.current = {
+            primary: item.value,
+            secondary: []
+        };
+        setValueItemList([]);
+        setSelectedSecondaryItem(null)
+    }
+
+    function secondaryItemSelectionHandler(item: FilterModel) {
+        setSelectedSecondaryItem(item);
+        const selectedItemValueList = secondaryItemList.filter((obj) => obj.value === item.value)[0].options as FilterModel[];
+        setValueItemList(selectedItemValueList);
+    }
+
+    function isChecked(primaryValue: string, secondaryValue: string, inputType: string, value: string) {
+        console.log("is checked called");
+        if(primaryValue !== selectedFiltersAndValues.current.primary)
+            return false;
+
+        const secondaryFilterItems =
+            selectedFiltersAndValues.current.secondary.filter((obj) => obj.key === secondaryValue);
+
+        return !(secondaryFilterItems.length === 0 ||
+            secondaryFilterItems[0].inputType !== inputType ||
+            !secondaryFilterItems[0].value.includes(value));
+    }
+
+    function optionSelectionHandler(secondaryValue: string, inputType: string, value: string) {
+        updateState(new Date().toString());
+        selectedFiltersAndValues.current = updateObject(selectedFiltersAndValues.current, secondaryValue, inputType, value);
+        console.log("secondaryValue: ", secondaryValue, "inputType: ", inputType, "value: ", value);
+    }
+
+    function updateObject(currentSelectedFiltersAndValues: SelectedFilterModel, secondaryValue: string, inputType: string, value: string) {
+        // Iterate over the secondary array
+
+        let isValueUpdated = false;
+        for (let i = 0; i < currentSelectedFiltersAndValues.secondary.length; i++) {
+            // Find the object with the specified key
+            if (currentSelectedFiltersAndValues.secondary[i].key === secondaryValue) {
+                // Check inputType
+                if (inputType === "radio") {
+                    // If inputType is "radio", update the value
+                    currentSelectedFiltersAndValues.secondary[i].value = [value];
+                } else if (inputType === "checkbox") {
+                    // If inputType is "checkbox"
+                    const index = currentSelectedFiltersAndValues.secondary[i].value.indexOf(value);
+                    // If value is not in the array, add it; otherwise, remove it
+                    if (index === -1) {
+                        currentSelectedFiltersAndValues.secondary[i].value.push(value);
+                    } else {
+                        currentSelectedFiltersAndValues.secondary[i].value.splice(index, 1);
+                    }
+                }
+                // Exit loop since the object is found and updated
+                isValueUpdated = true;
+                break;
+            }
+        }
+
+        if(!isValueUpdated) {
+            currentSelectedFiltersAndValues.secondary.push({
+                key: secondaryValue,
+                inputType: inputType,
+                value: [value]
+            })
+        }
+        // Return the updated object
+        // console.log("currentSelectedFiltersAndValues: ", currentSelectedFiltersAndValues);
+        return currentSelectedFiltersAndValues;
+    }
+
+
+    useEffect(() => {
+        setSecondaryItemList(filterConfig[0].options as FilterModel[])
+    }, [])
 
 
     return (
         <dialog open className={classes["modal"]}>
             <main className={classes["modal__main"]}>
                 <ul className={classes["modal__main__list"]}>
-                    <li className={classes["modal__main__list__item-key"]}>
-                        <div className={classes["modal__main__list__item-key__name"]}>Pokemon</div>
-                        <div className={classes["modal__main__list__item-key__count"]}>3</div>
-                        <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
-                    </li>
-                    <li className={classes["modal__main__list__item-key"]}>
-                        <div className={classes["modal__main__list__item-key__name"]}>Moves</div>
-                        <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
-                    </li>
+                    {
+                        filterConfig.map((item) => (
+                            <li
+                                onClick={() => primaryItemSelectionHandler(item)}
+                                key={item.value}
+                                className={classes["modal__main__list__item-key"]}
+                                style={selectedPrimaryItem === item.value ? {backgroundColor: "var(--primary-color)"} : {}}
+                            >
+                                <div className={classes["modal__main__list__item-key__name"]}>{item.label}</div>
+                                <div className={classes["modal__main__list__item-key__count"]}>3</div>
+                                <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
+                            </li>
+                        ))
+                    }
                 </ul>
 
                 <ul className={classes["modal__main__list"]}>
-                    <li className={classes["modal__main__list__item-key"]}>
-                        <div className={classes["modal__main__list__item-key__name"]}>Generation</div>
-                        <div className={classes["modal__main__list__item-key__count"]}>1</div>
-                        <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
-                    </li>
-                    <li className={classes["modal__main__list__item-key"]}>
-                        <div className={classes["modal__main__list__item-key__name"]}>Color</div>
-                        <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
-                    </li>
-                    <li className={classes["modal__main__list__item-key"]}>
-                        <div className={classes["modal__main__list__item-key__name"]}>Habitat</div>
-                        <div className={classes["modal__main__list__item-key__count"]}>2</div>
-                        <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
-                    </li>
+                    {
+                        secondaryItemList.map((item) => (
+                            <li
+                                onClick={() => secondaryItemSelectionHandler(item)}
+                                key={item.value}
+                                className={classes["modal__main__list__item-key"]}
+                                style={selectedSecondaryItem?.value === item.value ? {backgroundColor: "var(--primary-color)"} : {}}
+                            >
+                                <div className={classes["modal__main__list__item-key__name"]}>{item.label}</div>
+                                <div className={classes["modal__main__list__item-key__count"]}>1</div>
+                                <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
+                            </li>
+                        ))
+                    }
                 </ul>
 
                 <ul className={`${classes["modal__main__list"]} ${classes["modal__main__list-val"]}`}>
-                    <li className={classes["modal__main__list__item-val"]}>
-                        <input type={"checkbox"} className={classes["modal__main__list__item-val__input"]}/>
-                        <label className={classes["modal__main__list__item-val__label"]}>Grassland</label>
-                    </li>
-                    <li className={classes["modal__main__list__item-val"]}>
-                        <input type={"checkbox"} className={classes["modal__main__list__item-val__input"]}/>
-                        <label className={classes["modal__main__list__item-val__label"]}>Mountain</label>
-                    </li>
-                    <li className={classes["modal__main__list__item-val"]}>
-                        <input type={"checkbox"} className={classes["modal__main__list__item-val__input"]}/>
-                        <label className={classes["modal__main__list__item-val__label"]}>Water</label>
-                    </li>
+                    {
+                        valueItemList.map((item) => (
+                            <li
+                                key={item.value}
+                                className={classes["modal__main__list__item-val"]}>
+                                <input
+                                    type={selectedSecondaryItem?.inputType}
+                                    value={item.value}
+                                    checked={
+                                    isChecked(
+                                        selectedPrimaryItem,
+                                        selectedSecondaryItem?.value!,
+                                        selectedSecondaryItem?.inputType!,
+                                        item.value
+                                    )}
+                                    onChange={(event) => optionSelectionHandler(
+                                        selectedSecondaryItem?.value!,
+                                        selectedSecondaryItem?.inputType!,
+                                        event.target.value
+                                    )}
+                                    name={selectedSecondaryItem?.value}
+                                    id={selectedSecondaryItem?.value}
+                                    className={classes["modal__main__list__item-val__input"]}/>
+                                <label
+                                    htmlFor={selectedSecondaryItem?.value}
+                                    className={classes["modal__main__list__item-val__label"]}
+                                >{item.label}</label>
+                            </li>
+                        ))
+                    }
                 </ul>
             </main>
             <footer className={classes["modal__footer"]}>
                 <button className={classes["modal__footer__btn-reset"]}>Reset all filters</button>
-                <button className={classes["modal__footer__btn-show"]}>Show</button>
+                <button className={classes["modal__footer__btn-show"]}>Show pokemons</button>
             </footer>
         </dialog>
     );

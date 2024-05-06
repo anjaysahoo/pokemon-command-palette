@@ -223,12 +223,12 @@ button:disabled{
     cursor: not-allowed;
 }
 
-input{
-    all: unset;
-}
+/*input{*/
+/*    all: unset;*/
+/*}*/
 
-input[type="checkbox"]{
-    border-radius: 50%;
-}
+/*input[type="checkbox"]{*/
+/*    border-radius: 50%;*/
+/*}*/
 
 /*************************************************************/
