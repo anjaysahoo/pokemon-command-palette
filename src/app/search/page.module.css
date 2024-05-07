@@ -1,0 +1,18 @@
+.main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main__content{
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    gap: 2rem;
+    width: 60%;
+}
+
+.main__content__head{
+    font-size: var(--large-font-size);
+    font-weight: var(--large-font-weight);
+}

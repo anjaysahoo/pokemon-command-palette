@@ -1,14 +1,15 @@
 import {FilterModel} from "@/models/filter.model";
+import {InputType, PrimaryKeyValue} from "@/config/app-constants.config";
 
 const filterConfig: FilterModel[] = [
     {
-        "label": "Pokemons",
-        "value": "pokemons",
+        "label": "Pokémon",
+        "value": PrimaryKeyValue.POKEMONS,
         "options": [
             {
                 "label": "Generation",
                 "value": "generation",
-                "inputType": "radio",
+                "inputType": InputType.RADIO,
                 "options": [
                     {
                         "label": "Generation I",
@@ -27,7 +28,7 @@ const filterConfig: FilterModel[] = [
             {
                 "label": "Color",
                 "value": "color",
-                "inputType": "radio",
+                "inputType": InputType.RADIO,
                 "options": [
                     {
                         "label": "Red",
@@ -46,7 +47,7 @@ const filterConfig: FilterModel[] = [
             {
                 "label": "Habitat",
                 "value": "habitat[]",
-                "inputType": "checkbox",
+                "inputType": InputType.CHECKBOX,
                 "options": [
                     {
                         "label": "Grassland",
@@ -57,8 +58,8 @@ const filterConfig: FilterModel[] = [
                         "value": "mountain",
                     },
                     {
-                        "label": "Cave",
-                        "value": "cave",
+                        "label": "Water",
+                        "value": encodeURI("water's edge"),
                     }
                 ]
             }
@@ -67,12 +68,12 @@ const filterConfig: FilterModel[] = [
     },
     {
         "label": "Moves",
-        "value": "moves",
+        "value": PrimaryKeyValue.MOVES,
         "options": [
             {
                 "label": "Move Class",
                 "value": "move-class",
-                "inputType": "radio",
+                "inputType": InputType.RADIO,
                 "options": [
                     {
                         "label": "Physical",
@@ -91,19 +92,19 @@ const filterConfig: FilterModel[] = [
             {
                 "label": "Power points",
                 "value": "power-points",
-                "inputType": "radio",
+                "inputType": InputType.RADIO,
                 "options": [
                     {
                         "label": "above 10",
-                        "value": "pp > 10"
+                        "value": "10"
                     },
                     {
                         "label": "above 15",
-                        "value": "pp > 15"
+                        "value": "15"
                     },
                     {
                         "label": "above 20",
-                        "value": "pp > 20"
+                        "value": "20"
                     }
                 ]
             }

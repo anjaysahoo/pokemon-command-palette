@@ -58751,6 +58751,13 @@ export type Subscription_RootPokemon_V2_Versionname_StreamArgs = {
   where?: InputMaybe<Pokemon_V2_Versionname_Bool_Exp>;
 };
 
+export type MovesQueryVariables = Exact<{
+  where: Pokemon_V2_Move_Bool_Exp;
+}>;
+
+
+export type MovesQuery = { __typename?: 'query_root', pokemon_v2_move: Array<{ __typename?: 'pokemon_v2_move', name: string, pp?: number | null, priority?: number | null, damage_class?: { __typename?: 'pokemon_v2_movedamageclass', name: string } | null }> };
+
 export type PokemonsQueryVariables = Exact<{
   where: Pokemon_V2_Pokemonspecies_Bool_Exp;
   order_by?: InputMaybe<Array<Pokemon_V2_Pokemonspecies_Order_By> | Pokemon_V2_Pokemonspecies_Order_By>;
@@ -58760,6 +58767,33 @@ export type PokemonsQueryVariables = Exact<{
 export type PokemonsQuery = { __typename?: 'query_root', pokemons: Array<{ __typename?: 'pokemon_v2_pokemonspecies', name: string, id: number, base_happiness?: number | null }> };
 
 
+
+export const MovesDocument = `
+    query Moves($where: pokemon_v2_move_bool_exp!) {
+  pokemon_v2_move(where: $where) {
+    name
+    damage_class: pokemon_v2_movedamageclass {
+      name
+    }
+    pp
+    priority
+  }
+}
+    `;
+
+export const useMovesQuery = <
+      TData = MovesQuery,
+      TError = unknown
+    >(
+      variables: MovesQueryVariables,
+      options?: UseQueryOptions<MovesQuery, TError, TData>
+    ) => {
+    
+    return useQuery<MovesQuery, TError, TData>(
+      ['Moves', variables],
+      fetcher<MovesQuery, MovesQueryVariables>(MovesDocument, variables),
+      options
+    )};
 
 export const PokemonsDocument = `
     query Pokemons($where: pokemon_v2_pokemonspecies_bool_exp!, $order_by: [pokemon_v2_pokemonspecies_order_by!]) {

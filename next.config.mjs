@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+    experimental: {
+        /** https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout **/
+        missingSuspenseWithCSRBailout: false,
+    },
+};
 
 export default nextConfig;

@@ -1,0 +1,10 @@
+query Moves($where: pokemon_v2_move_bool_exp!) {
+  pokemon_v2_move(where: $where) {
+    name
+    damage_class: pokemon_v2_movedamageclass {
+      name
+    }
+    pp
+    priority
+  }
+}

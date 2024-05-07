@@ -5,6 +5,8 @@ import classes from './filter-modal.component.module.css';
 import {FilterModel} from "@/models/filter.model";
 import filterConfig from "@/config/filter.config";
 import {SelectedFilterModel} from "@/models/selected-filter.model";
+import {useRouter} from "next/navigation";
+import {InputType} from "@/config/app-constants.config";
 
 function FilterModalComponent() {
     const [selectedPrimaryItem, setSelectedPrimaryItem] =
@@ -17,12 +19,15 @@ function FilterModalComponent() {
         React.useState<FilterModel[]>([]);
     const[, updateState] = React.useState<string>();
     const[isShowBtnDisabled, setIsShowBtnDisabled] = React.useState<boolean>(true);
+    const router = useRouter();
 
-    const selectedFiltersAndValues =
-        React.useRef<SelectedFilterModel>({
+    const [selectedFiltersAndValues, setSelectedFiltersAndValues]
+        = React.useState<SelectedFilterModel>(
+        {
             primary: filterConfig[0].value,
             secondary: []
-        });
+        }
+    )
 
 
 
@@ -36,10 +41,10 @@ function FilterModalComponent() {
     }
 
     function reset(item: FilterModel){
-        selectedFiltersAndValues.current = {
+        setSelectedFiltersAndValues( {
             primary: item.value,
             secondary: []
-        };
+        });
         setValueItemList([]);
         setSelectedSecondaryItem(null);
         setIsShowBtnDisabled(true);
@@ -51,13 +56,13 @@ function FilterModalComponent() {
         setValueItemList(selectedItemValueList);
     }
 
-    function isChecked(primaryValue: string, secondaryValue: string, inputType: string, value: string) {
+    function isChecked(passedSelectedFiltersAndValues: SelectedFilterModel, primaryValue: string, secondaryValue: string, inputType: string, value: string) {
         console.log("is checked called");
-        if(primaryValue !== selectedFiltersAndValues.current.primary)
+        if(primaryValue !== passedSelectedFiltersAndValues.primary)
             return false;
 
         const secondaryFilterItems =
-            selectedFiltersAndValues.current.secondary.filter((obj) => obj.key === secondaryValue);
+            passedSelectedFiltersAndValues.secondary.filter((obj) => obj.key === secondaryValue);
 
         return !(secondaryFilterItems.length === 0 ||
             secondaryFilterItems[0].inputType !== inputType ||
@@ -65,10 +70,14 @@ function FilterModalComponent() {
     }
 
     function optionSelectionHandler(secondaryValue: string, inputType: string, value: string) {
-        updateState(new Date().toString());
-        selectedFiltersAndValues.current = updateObject(selectedFiltersAndValues.current, secondaryValue, inputType, value);
-        console.log("secondaryValue: ", secondaryValue, "inputType: ", inputType, "value: ", value);
+        // console.log("updatedSelectedFiltersAndValues : ", updateObject(selectedFiltersAndValues, secondaryValue, inputType, value))
+        setSelectedFiltersAndValues(updateObject(selectedFiltersAndValues, secondaryValue, inputType, value));
+        // setSelectedFiltersAndValues(
+        //     (prevSelectedFiltersAndValues) =>
+        //         updateObject(prevSelectedFiltersAndValues, secondaryValue, inputType, value)
+        // )
         setIsShowBtnDisabled(false);
+        updateState(new Date().toString());
     }
 
     function updateObject(currentSelectedFiltersAndValues: SelectedFilterModel, secondaryValue: string, inputType: string, value: string) {
@@ -79,10 +88,10 @@ function FilterModalComponent() {
             // Find the object with the specified key
             if (currentSelectedFiltersAndValues.secondary[i].key === secondaryValue) {
                 // Check inputType
-                if (inputType === "radio") {
+                if (inputType === InputType.RADIO) {
                     // If inputType is "radio", update the value
                     currentSelectedFiltersAndValues.secondary[i].value = [value];
-                } else if (inputType === "checkbox") {
+                } else if (inputType === InputType.CHECKBOX) {
                     // If inputType is "checkbox"
                     const index = currentSelectedFiltersAndValues.secondary[i].value.indexOf(value);
                     // If value is not in the array, add it; otherwise, remove it
@@ -108,6 +117,19 @@ function FilterModalComponent() {
         // Return the updated object
         // console.log("currentSelectedFiltersAndValues: ", currentSelectedFiltersAndValues);
         return currentSelectedFiltersAndValues;
+    }
+
+
+    function showPokemonHandler(){
+        let href = `/search?primary-filter=${selectedFiltersAndValues.primary}`;
+
+        selectedFiltersAndValues.secondary.forEach((obj) => {
+            obj.value.forEach((value) => {
+                href += `&${obj.key}=${value}`
+            })
+        })
+
+        router.push(href)
     }
 
 
@@ -164,6 +186,7 @@ function FilterModalComponent() {
                                     value={item.value}
                                     checked={
                                     isChecked(
+                                        selectedFiltersAndValues,
                                         selectedPrimaryItem,
                                         selectedSecondaryItem?.value!,
                                         selectedSecondaryItem?.inputType!,
@@ -192,6 +215,7 @@ function FilterModalComponent() {
                     className={classes["modal__footer__btn-reset"]}>Reset all filters</button>
                 <button
                     disabled={isShowBtnDisabled}
+                    onClick={showPokemonHandler}
                     className={classes["modal__footer__btn-show"]}>Show pokemons &gt;</button>
             </footer>
         </dialog>
