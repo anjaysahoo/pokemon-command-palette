@@ -6,14 +6,10 @@ import classes from "@/components/search/pokemons/pokemons.search.component.modu
 function MovesSearchComponent({updateCount}: any) {
     const searchParams = useSearchParams()
 
-    searchParams.forEach((value, key) => {
-        console.log(value, key);
-    });
-
     let queryVariables: Pokemon_V2_Move_Bool_Exp = {};
 
     const moveClass = decodeURI(searchParams.get("move-class")!);
-    if (moveClass !== null) {
+    if (moveClass !== 'null' && moveClass) {
         queryVariables.pokemon_v2_movedamageclass = {
             name: {
                 _eq: moveClass
@@ -22,7 +18,7 @@ function MovesSearchComponent({updateCount}: any) {
     }
 
     const powerPoints = decodeURI(searchParams.get("power-points")!);
-    if (powerPoints !== 'null') {
+    if (powerPoints !== 'null' && powerPoints) {
         queryVariables.pp = {
             _gt: Number(powerPoints)
         };
@@ -39,11 +35,6 @@ function MovesSearchComponent({updateCount}: any) {
         updateCount(data?.pokemon_v2_move.length);
     }
 
-
-
-    console.log("data :", data);
-    console.log("isLoading :", isLoading);
-    console.log("error :", error);
 
     return (
         <ul className={classes["list"]}>

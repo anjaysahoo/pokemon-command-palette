@@ -1,24 +1,36 @@
 import {useSearchParams} from "next/navigation";
-import {Order_By, usePokemonsQuery} from "@/graphql/generated";
+import {Order_By, Pokemon_V2_Pokemonspecies_Bool_Exp, usePokemonsQuery} from "@/graphql/generated";
 import classes from "./pokemons.search.component.module.css";
 import PropTypes from "prop-types";
 
 function PokemonsSearchComponent({updateCount}: any) {
-    const searchParams = useSearchParams()
+    const searchParams = useSearchParams();
 
-    searchParams.forEach((value, key) => {
-        console.log(value, key);
-    });
+    let queryVariables: Pokemon_V2_Pokemonspecies_Bool_Exp = {};
+
+    const generation = decodeURI(searchParams.get("generation")!);
+    if(generation !== 'null' && generation) {
+        queryVariables["pokemon_v2_generation"] = { "name": { "_eq": generation } };
+    }
+
+    const color = decodeURI(searchParams.get("color")!);
+
+    if(color !== 'null' && color) {
+        console.log("color :", typeof color);
+        queryVariables["pokemon_v2_pokemoncolor"] = { "name": { "_eq": color } };
+    }
+
+    const habitat = searchParams.getAll("habitat[]").map((val) => decodeURI(val))
+    if(habitat.length > 0 && habitat) {
+        queryVariables["pokemon_v2_pokemonhabitat"] = {
+            "pokemon_v2_pokemonhabitatnames": {"name": {"_in": habitat}}
+        }
+    }
+
 
     const { data, isLoading, error } = usePokemonsQuery(
         {
-            "where": {
-                "pokemon_v2_generation": { "name": { "_eq": "generation-iii" } },
-                "pokemon_v2_pokemoncolor": { "name": { "_eq": "green" } },
-                "pokemon_v2_pokemonhabitat": {
-                    "pokemon_v2_pokemonhabitatnames": { "name": { "_in": ["grassland", "mountain", "water's edge"] } }
-                }
-            },
+            "where": queryVariables,
             "order_by": {
                 "id": Order_By.Asc
             }
@@ -29,11 +41,6 @@ function PokemonsSearchComponent({updateCount}: any) {
         updateCount(data?.pokemons.length);
     }
 
-
-
-    console.log("data :", data);
-    console.log("isLoading :", isLoading);
-    console.log("error :", error);
 
     return (
         <ul className={classes["list"]}>
