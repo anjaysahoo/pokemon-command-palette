@@ -20,7 +20,6 @@ function FilterModalComponent() {
     const[, updateState] = React.useState<string>();
     const[isShowBtnDisabled, setIsShowBtnDisabled] = React.useState<boolean>(true);
     const router = useRouter();
-
     const [selectedFiltersAndValues, setSelectedFiltersAndValues]
         = React.useState<SelectedFilterModel>(
         {
@@ -29,9 +28,8 @@ function FilterModalComponent() {
         }
     )
 
-
-
     function primaryItemSelectionHandler(item: FilterModel) {
+
         setSelectedPrimaryItem(item.value);
 
         const selectedItemValueList = filterConfig.filter((obj) => obj.value === item.value)[0].options as FilterModel[];
@@ -142,7 +140,7 @@ function FilterModalComponent() {
 
 
     return (
-        <dialog open className={classes["modal"]}>
+        <dialog className={classes["modal"]}>
             <main className={classes["modal__main"]}>
                 <ul className={classes["modal__main__list"]}>
                     {
