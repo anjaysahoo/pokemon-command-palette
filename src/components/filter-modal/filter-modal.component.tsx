@@ -57,7 +57,6 @@ function FilterModalComponent() {
     }
 
     function isChecked(passedSelectedFiltersAndValues: SelectedFilterModel, primaryValue: string, secondaryValue: string, inputType: string, value: string) {
-        console.log("is checked called");
         if(primaryValue !== passedSelectedFiltersAndValues.primary)
             return false;
 
@@ -70,12 +69,7 @@ function FilterModalComponent() {
     }
 
     function optionSelectionHandler(secondaryValue: string, inputType: string, value: string) {
-        // console.log("updatedSelectedFiltersAndValues : ", updateObject(selectedFiltersAndValues, secondaryValue, inputType, value))
         setSelectedFiltersAndValues(updateObject(selectedFiltersAndValues, secondaryValue, inputType, value));
-        // setSelectedFiltersAndValues(
-        //     (prevSelectedFiltersAndValues) =>
-        //         updateObject(prevSelectedFiltersAndValues, secondaryValue, inputType, value)
-        // )
         setIsShowBtnDisabled(false);
         updateState(new Date().toString());
     }
@@ -114,11 +108,8 @@ function FilterModalComponent() {
                 value: [value]
             })
         }
-        // Return the updated object
-        // console.log("currentSelectedFiltersAndValues: ", currentSelectedFiltersAndValues);
         return currentSelectedFiltersAndValues;
     }
-
 
     function showPokemonHandler(){
         let href = `/search?primary-filter=${selectedFiltersAndValues.primary}`;
@@ -130,6 +121,18 @@ function FilterModalComponent() {
         })
 
         router.push(href)
+    }
+
+    function getSecondaryFilterCount(passedSelectedFiltersAndValues: SelectedFilterModel, secondaryValue: string){
+        let count = passedSelectedFiltersAndValues.secondary.filter((obj) => obj.key === secondaryValue)[0]?.value.length;
+        return count !== undefined ? count : 0;
+    }
+
+    function getPrimaryFilterCount(passedSelectedFiltersAndValues: SelectedFilterModel, primaryValue: string) {
+        if(passedSelectedFiltersAndValues.primary !== primaryValue)
+            return 0;
+        return passedSelectedFiltersAndValues.secondary.reduce((acc, obj) => acc + obj.value.length, 0);
+
     }
 
 
@@ -151,7 +154,12 @@ function FilterModalComponent() {
                                 style={selectedPrimaryItem === item.value ? {backgroundColor: "var(--primary-color)"} : {}}
                             >
                                 <div className={classes["modal__main__list__item-key__name"]}>{item.label}</div>
-                                <div className={classes["modal__main__list__item-key__count"]}>3</div>
+                                {
+                                    getPrimaryFilterCount(selectedFiltersAndValues, item.value) > 0 &&
+                                    <div className={classes["modal__main__list__item-key__count"]}>
+                                        {getPrimaryFilterCount(selectedFiltersAndValues, item.value)}
+                                    </div>
+                                }
                                 <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
                             </li>
                         ))
@@ -168,7 +176,12 @@ function FilterModalComponent() {
                                 style={selectedSecondaryItem?.value === item.value ? {backgroundColor: "var(--primary-color)"} : {}}
                             >
                                 <div className={classes["modal__main__list__item-key__name"]}>{item.label}</div>
-                                <div className={classes["modal__main__list__item-key__count"]}>1</div>
+                                {
+                                    getSecondaryFilterCount(selectedFiltersAndValues, item.value) > 0 &&
+                                    <div className={classes["modal__main__list__item-key__count"]}>
+                                        {getSecondaryFilterCount(selectedFiltersAndValues, item.value)}
+                                    </div>
+                                }
                                 <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
                             </li>
                         ))
