@@ -5,7 +5,7 @@ import FilterModalComponent from "@/components/filter-modal/filter-modal.compone
 import React from "react";
 
 export default function Home() {
-    const [isFilterModalOpen, setIsFilterModalOpen] = React.useState<boolean>(true);
+    const [isFilterModalOpen, setIsFilterModalOpen] = React.useState<boolean>(false);
     const dialog = React.useRef<HTMLDivElement>(null);
     
 
@@ -16,6 +16,22 @@ export default function Home() {
             setIsFilterModalOpen(false);
         }
     }
+
+    const keyDownHandler = (event: KeyboardEvent) => {
+        if (event.ctrlKey && event.key === "k") {
+            event.preventDefault();
+            setIsFilterModalOpen(true);
+            console.log("You just pressed Control and K!");
+        }
+
+        if (event.key === "Escape") {
+            setIsFilterModalOpen(false);
+        }
+    };
+
+    React.useEffect(() => {
+        window.addEventListener("keydown", keyDownHandler);
+    });
 
   return (
     <main
