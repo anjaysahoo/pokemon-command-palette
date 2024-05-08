@@ -8,7 +8,7 @@ import {SelectedFilterModel} from "@/models/selected-filter.model";
 import {useRouter} from "next/navigation";
 import {InputType} from "@/config/app-constants.config";
 import IconLib from "@/lib/icon.lib";
-import {arrowForwardPath, checkPath} from "@/utils/app-icon.util";
+import {arrowForwardPath, checkPath, clearPath} from "@/utils/app-icon.util";
 
 
 function FilterModalComponent() {
@@ -133,7 +133,42 @@ function FilterModalComponent() {
         if(passedSelectedFiltersAndValues.primary !== primaryValue)
             return 0;
         return passedSelectedFiltersAndValues.secondary.reduce((acc, obj) => acc + obj.value.length, 0);
+    }
 
+    function clearSecondaryFilterHandler(secondaryValue: string) {
+        let newSelectedFiltersAndValues = selectedFiltersAndValues;
+        newSelectedFiltersAndValues.secondary = newSelectedFiltersAndValues.secondary.filter((obj) => obj.key !== secondaryValue);
+        setSelectedFiltersAndValues(newSelectedFiltersAndValues);
+        updateState(new Date().toString());
+    }
+
+    function getSecondaryList(item: FilterModel) {
+        const count = getSecondaryFilterCount(selectedFiltersAndValues, item.value);
+        return (
+            <li
+                onClick={() => secondaryItemSelectionHandler(item)}
+                key={item.value}
+                className={classes["modal__main__list__item-key"]}
+                style={selectedSecondaryItem?.value === item.value ? {backgroundColor: "var(--primary-color)"} : {}}
+            >
+                <div className={classes["modal__main__list__item-key__name"]}>{item.label}</div>
+                {
+                    count > 0 &&
+                    <div className={classes["modal__main__list__item-key__count"]}>
+                        {count}
+                    </div>
+                }
+                <IconLib d={arrowForwardPath} color="var(--text-color)" size={"0.9em"} strokeWidth={1}/>
+                {
+                    count > 0 &&
+                    <div
+                        onClick={() => clearSecondaryFilterHandler(item.value)}
+                        className={classes["modal__main__list__item-key__clear"]}>
+                        <IconLib d={clearPath} color="var(--text-color)" size={"1.1em"} strokeWidth={0.5}/>
+                    </div>
+                }
+            </li>
+        )
     }
 
 
@@ -220,21 +255,7 @@ function FilterModalComponent() {
                 <ul className={classes["modal__main__list"]}>
                     {
                         secondaryItemList.map((item) => (
-                            <li
-                                onClick={() => secondaryItemSelectionHandler(item)}
-                                key={item.value}
-                                className={classes["modal__main__list__item-key"]}
-                                style={selectedSecondaryItem?.value === item.value ? {backgroundColor: "var(--primary-color)"} : {}}
-                            >
-                                <div className={classes["modal__main__list__item-key__name"]}>{item.label}</div>
-                                {
-                                    getSecondaryFilterCount(selectedFiltersAndValues, item.value) > 0 &&
-                                    <div className={classes["modal__main__list__item-key__count"]}>
-                                        {getSecondaryFilterCount(selectedFiltersAndValues, item.value)}
-                                    </div>
-                                }
-                                <IconLib d={arrowForwardPath} color="var(--text-color)" size={"0.9em"} strokeWidth={1}/>
-                            </li>
+                            getSecondaryList(item)
                         ))
                     }
                 </ul>
