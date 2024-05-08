@@ -25,6 +25,8 @@ npm install
 
 Create a `.env.local` file in your project root and add below key-value pair
 
+[**Pokémon API**](https://pokeapi.co/docs/graphql)
+
 ```js
 NEXT_PUBLIC_API_URL=https://beta.pokeapi.co/graphql/v1beta
 ```
