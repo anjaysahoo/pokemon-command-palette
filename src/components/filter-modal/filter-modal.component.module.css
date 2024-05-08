@@ -58,9 +58,36 @@
 .modal__main__list__item-val{
     display: flex;
     flex-direction: row;
+    gap: 1rem;
     padding: 1.2rem;
     border-radius: 10px;
-    background: var(--color-4);
+    background: var(--color-2);
+    position: relative;
+    cursor: pointer;
+}
+
+.modal__main__list__item-val:hover{
+    background: var(--color-9);
+}
+
+.modal__main__list__item-val__input{
+    position: absolute;
+}
+
+.modal__main__list__item-val__icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.5rem;
+    width: 1.5rem;
+    background: var(--color-8);
+    fill: white;
+}
+
+.modal__main__list__item-val__icon__svg{
+    opacity: 50%;
+    height: 1rem;
+    width: 1rem;
 }
 
 .modal__footer{
@@ -76,5 +103,9 @@
 }
 
 .modal__footer__btn-show{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.7rem;
     background: var(--primary-color);
 }

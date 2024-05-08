@@ -7,6 +7,9 @@ import filterConfig from "@/config/filter.config";
 import {SelectedFilterModel} from "@/models/selected-filter.model";
 import {useRouter} from "next/navigation";
 import {InputType} from "@/config/app-constants.config";
+import IconLib from "@/lib/icon.lib";
+import {arrowForwardPath, checkPath} from "@/utils/app-icon.util";
+
 
 function FilterModalComponent() {
     const [selectedPrimaryItem, setSelectedPrimaryItem] =
@@ -139,6 +142,56 @@ function FilterModalComponent() {
     }, [])
 
 
+    function getValueAndLabel(item: FilterModel) {
+        const isThisChecked = isChecked(
+            selectedFiltersAndValues,
+            selectedPrimaryItem,
+            selectedSecondaryItem?.value!,
+            selectedSecondaryItem?.inputType!,
+            item.value
+        )
+
+        return (
+            <label
+                key={item.value}
+                htmlFor={item?.value}
+                className={classes["modal__main__list__item-val"]}
+                style={isThisChecked ? {"backgroundColor": "var(--color-4)"} : {}}
+            >
+                <input
+                    type={selectedSecondaryItem?.inputType}
+                    value={item.value}
+                    checked={isThisChecked}
+                    onChange={(event) => optionSelectionHandler(
+                        selectedSecondaryItem?.value!,
+                        selectedSecondaryItem?.inputType!,
+                        event.target.value
+                    )}
+                    name={selectedSecondaryItem?.value}
+                    id={item?.value}
+                    className={classes["modal__main__list__item-val__input"]}/>
+                {
+                    isThisChecked ?
+                        <div
+                            className={classes["modal__main__list__item-val__icon"]}
+                            style={selectedSecondaryItem?.inputType === InputType.CHECKBOX ? {"borderRadius": "5px"} : {"borderRadius": "50%"}}
+                        >
+                            <IconLib d={checkPath} color="var(--color-3)" size={"0.8em"}/>
+                        </div>
+                        :
+                        <div
+                            className={classes["modal__main__list__item-val__icon"]}
+                            style={selectedSecondaryItem?.inputType === InputType.CHECKBOX ? {"borderRadius": "5px"} : {"borderRadius": "50%"}}
+                        ></div>
+                }
+
+                <div className={classes["modal__main__list__item-val__label"]}
+                >{item.label}</div>
+            </label>
+        )
+    }
+
+
     return (
         <dialog className={classes["modal"]}>
             <main className={classes["modal__main"]}>
@@ -158,7 +211,7 @@ function FilterModalComponent() {
                                         {getPrimaryFilterCount(selectedFiltersAndValues, item.value)}
                                     </div>
                                 }
-                                <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
+                                <IconLib d={arrowForwardPath} color="var(--text-color)" size={"0.9em"} strokeWidth={1}/>
                             </li>
                         ))
                     }
@@ -180,7 +233,7 @@ function FilterModalComponent() {
                                         {getSecondaryFilterCount(selectedFiltersAndValues, item.value)}
                                     </div>
                                 }
-                                <div className={classes["modal__main__list__item-key__icon"]}>&gt;</div>
+                                <IconLib d={arrowForwardPath} color="var(--text-color)" size={"0.9em"} strokeWidth={1}/>
                             </li>
                         ))
                     }
@@ -189,33 +242,7 @@ function FilterModalComponent() {
                 <ul className={`${classes["modal__main__list"]} ${classes["modal__main__list-val"]}`}>
                     {
                         valueItemList.map((item) => (
-                            <li
-                                key={item.value}
-                                className={classes["modal__main__list__item-val"]}>
-                                <input
-                                    type={selectedSecondaryItem?.inputType}
-                                    value={item.value}
-                                    checked={
-                                    isChecked(
-                                        selectedFiltersAndValues,
-                                        selectedPrimaryItem,
-                                        selectedSecondaryItem?.value!,
-                                        selectedSecondaryItem?.inputType!,
-                                        item.value
-                                    )}
-                                    onChange={(event) => optionSelectionHandler(
-                                        selectedSecondaryItem?.value!,
-                                        selectedSecondaryItem?.inputType!,
-                                        event.target.value
-                                    )}
-                                    name={selectedSecondaryItem?.value}
-                                    id={selectedSecondaryItem?.value}
-                                    className={classes["modal__main__list__item-val__input"]}/>
-                                <label
-                                    htmlFor={selectedSecondaryItem?.value}
-                                    className={classes["modal__main__list__item-val__label"]}
-                                >{item.label}</label>
-                            </li>
+                            getValueAndLabel(item)
                         ))
                     }
                 </ul>
@@ -227,7 +254,10 @@ function FilterModalComponent() {
                 <button
                     disabled={isShowBtnDisabled}
                     onClick={showPokemonHandler}
-                    className={classes["modal__footer__btn-show"]}>Show pokemons &gt;</button>
+                    className={classes["modal__footer__btn-show"]}>
+                    <div>Show pokemons</div>
+                     <IconLib d={arrowForwardPath} color="var(--text-color)" size={"0.9em"} strokeWidth={2}/>
+                </button>
             </footer>
         </dialog>
     );
