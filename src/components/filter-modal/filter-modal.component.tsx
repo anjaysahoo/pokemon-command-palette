@@ -142,6 +142,11 @@ function FilterModalComponent() {
         updateState(new Date().toString());
     }
 
+
+    useEffect(() => {
+        setSecondaryItemList(filterConfig[0].options as FilterModel[])
+    }, [])
+
     function getSecondaryList(item: FilterModel) {
         const count = getSecondaryFilterCount(selectedFiltersAndValues, item.value);
         return (
@@ -170,13 +175,6 @@ function FilterModalComponent() {
             </li>
         )
     }
-
-
-    useEffect(() => {
-        setSecondaryItemList(filterConfig[0].options as FilterModel[])
-    }, [])
-
-
     function getValueAndLabel(item: FilterModel) {
         const isThisChecked = isChecked(
             selectedFiltersAndValues,
