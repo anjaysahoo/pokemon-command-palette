@@ -18,7 +18,7 @@ export default function Home() {
     }
 
     const keyDownHandler = (event: KeyboardEvent) => {
-        if (event.ctrlKey && event.key === "k") {
+        if ((event.ctrlKey || event.metaKey) && event.key === "k") {
             event.preventDefault();
             setIsFilterModalOpen(true);
             console.log("You just pressed Control and K!");
