@@ -30,6 +30,10 @@
 }
 
 .modal__main__list__item-key{
+    position: relative;
+}
+
+.modal__main__list__item-key__content{
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -38,19 +42,20 @@
     border-radius: 10px;
     background: var(--color-2);
     position: relative;
+    z-index: 2;
     min-height: 25px;
 }
 
-.modal__main__list__item-key:hover{
+.modal__main__list__item-key__content:hover{
     min-height: 20px;
     border: 2px solid var(--primary-color);
 }
 
-.modal__main__list__item-key__name{
+.modal__main__list__item-key__content__name{
     margin-right: auto;
 }
 
-.modal__main__list__item-key__count{
+.modal__main__list__item-key__content__count{
     background: var(--color-3);
     border-radius: 15px;
     padding: 0.2rem 0.8rem;
@@ -59,6 +64,7 @@
 }
 
 .modal__main__list__item-key__clear{
+    all: unset;
     position: absolute;
     display: flex;
     align-items: center;
@@ -66,18 +72,19 @@
     padding: 0.5rem;
     background: var(--color-10);
     border-radius: 0 5px 5px 0;
-    right: -2.35rem;
+    right: 0;
+    top: 1rem;
     visibility: hidden;
     cursor: pointer;
-    z-index: 10;
-    /*transform: translateX(0%) translateZ(0px);;*/
-    /*transition-duration: 1000ms;*/
-    /*transition-timing-function: linear;*/
+    z-index: 1;
+    transform: translateX(0%);
+    transition-duration: 200ms;
+    transition-timing-function: linear;
 }
 
 .modal__main__list__item-key:hover .modal__main__list__item-key__clear{
     visibility: unset;
-    /*transform: translateX(90%) translateZ(0px);;*/
+    transform: translateX(90%);
 }
 
 .modal__main__list__item-val{
