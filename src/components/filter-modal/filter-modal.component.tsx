@@ -154,23 +154,27 @@ function FilterModalComponent() {
                 onClick={() => secondaryItemSelectionHandler(item)}
                 key={item.value}
                 className={classes["modal__main__list__item-key"]}
-                style={selectedSecondaryItem?.value === item.value ? {backgroundColor: "var(--primary-color)"} : {}}
             >
-                <div className={classes["modal__main__list__item-key__name"]}>{item.label}</div>
+                <div
+                    className={classes["modal__main__list__item-key__content"]}
+                    style={selectedSecondaryItem?.value === item.value ? {backgroundColor: "var(--primary-color)"} : {}}
+                >
+                    <div className={classes["modal__main__list__item-key__content__name"]}>{item.label}</div>
+                    {
+                        count > 0 &&
+                        <div className={classes["modal__main__list__item-key__content__count"]}>
+                            {count}
+                        </div>
+                    }
+                    <IconLib d={arrowForwardPath} color="var(--text-color)" size={"0.9em"} strokeWidth={1}/>
+                </div>
                 {
                     count > 0 &&
-                    <div className={classes["modal__main__list__item-key__count"]}>
-                        {count}
-                    </div>
-                }
-                <IconLib d={arrowForwardPath} color="var(--text-color)" size={"0.9em"} strokeWidth={1}/>
-                {
-                    count > 0 &&
-                    <div
+                    <button
                         onClick={() => clearSecondaryFilterHandler(item.value)}
                         className={classes["modal__main__list__item-key__clear"]}>
                         <IconLib d={clearPath} color="var(--text-color)" size={"1.1em"} strokeWidth={0.5}/>
-                    </div>
+                    </button>
                 }
             </li>
         )
@@ -234,13 +238,13 @@ function FilterModalComponent() {
                             <li
                                 onClick={() => primaryItemSelectionHandler(item)}
                                 key={item.value}
-                                className={classes["modal__main__list__item-key"]}
+                                className={classes["modal__main__list__item-key__content"]}
                                 style={selectedPrimaryItem === item.value ? {backgroundColor: "var(--primary-color)"} : {}}
                             >
-                                <div className={classes["modal__main__list__item-key__name"]}>{item.label}</div>
+                                <div className={classes["modal__main__list__item-key__content__name"]}>{item.label}</div>
                                 {
                                     getPrimaryFilterCount(selectedFiltersAndValues, item.value) > 0 &&
-                                    <div className={classes["modal__main__list__item-key__count"]}>
+                                    <div className={classes["modal__main__list__item-key__content__count"]}>
                                         {getPrimaryFilterCount(selectedFiltersAndValues, item.value)}
                                     </div>
                                 }
