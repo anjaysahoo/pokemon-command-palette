@@ -38,10 +38,12 @@
     border-radius: 10px;
     background: var(--color-2);
     position: relative;
+    min-height: 25px;
 }
 
 .modal__main__list__item-key:hover{
-    border: 2px solid var(--primary-color)
+    min-height: 20px;
+    border: 2px solid var(--primary-color);
 }
 
 .modal__main__list__item-key__name{
